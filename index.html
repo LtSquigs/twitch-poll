@@ -1,0 +1,541 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="app://twitch-polls/css/wyrm.css">
+    <script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
+    <script src="https://ttv-api.s3.amazonaws.com/twitch.min.js"></script>
+    <style>
+
+      .tab-header span {
+        display: inline-block;
+        color: white;
+        width: 50%;
+        text-align: center;
+        padding: 10px;
+        cursor: pointer;
+        background: #505050   ;
+      }
+
+      .tab-header span.active {
+        background: black;
+      }
+
+      .no-polls {
+        display: inline-block;
+        width: 100%;
+        text-align: center;
+        font-size: 20px;
+        margin-top: 10px;
+      }
+
+      .js-controls {
+        padding: 10px;
+      }
+
+      .js-results {
+        padding: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="js-main-container" style="width: 100%;">
+      <div class="js-loader wy-spinner wy-spinner-large wy-spinner-absolute"></div>
+      <div class="js-tab tab-header" style="display: none;"><span class="active js-create-tab">Create Poll</span><span class="js-poll-tab">Poll Results</span></div>
+      <div class="js-controls" style="display: none;">
+        <form class="">
+          <fieldset>
+            <div class="wy-control-group">
+              <label>Export Url</label>
+              <div class="wy-control wy-input-suffix">
+                <input size="28" type="text" class="js-endpoint" readonly="readonly" value="http://localhost:12512/poll-results/" /><span class="wy-input-context js-copy-address" style="cursor: pointer;">Copy</span><span class="wy-input-context js-open-address" style="cursor: pointer;">Open</span>
+              </div>
+            </div>
+            <div class="wy-control-group">
+              <label>Poll Duration(s)</label>
+              <div class="wy-control wy-input-suffix">
+                <input type="number" placeholder="30"  value="30" min="10" max="999" class="js-duration" /><span class="wy-input-context">seconds</span>
+              </div>
+            </div>
+            <div class="wy-control-group">
+              <label>
+                Show Results in Chat
+              </label>
+              <div class="wy-switch wy-input-suffix js-results-switch active" style="margin-left: 5px;"></div>
+            </div>
+            <div class="wy-control-group">
+              <label>Poll Type</label>
+              <div class="wy-control wy-input-suffix">
+                <select class="js-polltype">
+                  <option value="yn">Yes/No</option> 
+                  <option value="tf">True/False</option>
+                  <option value="custom">Custom</option>
+                </select>
+              </div>
+            </div>
+          </fieldset>
+        </form>
+
+        <form class="js-single-question">
+          <fieldset>
+            <div class="wy-control-group">
+              <label>Question</label>
+              <div class="wy-control wy-input-suffix">
+                <input type="text" placeholder="Question text here" class="js-question" size="50"  />
+                <span class="wy-form-message" style="display: none;">Quesiton can not be empty.</span>
+              </div>
+            </div>
+          </fieldset>
+        </form>
+
+        <form class="js-custom" style="display: none;">
+          <fieldset>
+            <div class="wy-control-group">
+              <label>Option 1</label>
+              <div class="wy-control wy-input-suffix">
+                <input type="text" placeholder="Option here" size="50" /><span class="wy-input-context js-add-option" style="cursor: pointer;">+</span>
+              </div>
+            </div>
+          </fieldset>
+        </form>
+
+        <input type="submit" class="btn js-start-poll" value="Start Poll"/>
+        <input type="submit" class="btn btn-danger js-stop-poll" style="display: none;" value="Stop Poll"/>
+
+      </div>
+      <div class="js-results" style="display: none;"> 
+        <span class="no-polls" >No Polls Have Been Started Yet!</span>
+        <div class="js-res-pane" style="display: none;">
+          <span style="display: inline-block; width: 100%; text-align: center; font-size: 30px;" class="js-res-status"><b>Poll Started!</b></span>
+          <br/>
+          <br/>
+          <span><b>Question: </b></span><span class="js-res-question"></span>
+          <br/>
+          <br/>
+          <span><b>Time Left: </b></span><span class="js-res-seconds"></span><span>s</span>
+          <br/>
+          <br/>
+          <span><b>Results:</b></span>
+          <br/>
+          <br/>
+          <div style="margin-left: 20px;" class="js-res-results">
+            <span>No: </span><span class="js-res-opt-1"></span>
+            <br/><br/>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <ul class="wy-tray-container js-copy-success" style="width: 100%;">
+      <li class="wy-tray-item-success" style="width: auto;">Copied</li>
+    </ul>
+
+    <script id="option_template" type="template/html">
+      <div class="wy-control-group">
+        <label></label>
+        <div class="wy-control wy-input-suffix">
+          <input type="text" placeholder="Option here" size="50" /><span class="wy-input-context js-add-option" style="cursor: pointer;">+</span><span  class="wy-input-context js-remove-option" style="cursor: pointer;" >-</span>
+        </div>
+      </div>
+    </script>
+
+    <script>
+    // TODO LIST:
+    //  REMOVE RIVETJS: WAS A MISTAKE
+    //  HAVE A GOOD DEFAULT TEMPLATE
+    //  Split the string outputs based off length into multiple messages
+    //  Keep track of send limit
+    //  Some other stuff:
+    //   How does the xsplit handle websocket being disconnected: try to reconnect
+    //   How does this thing handle disconnect irc
+    //   HANDLE EMPTY OPTIONS ERROR, SHOW ERROR
+    //   FIX POLL RESULTS IN UI
+
+
+    var gui = require('nw.gui');
+    var irc = require('twitch-irc');
+    var ws = require('nodejs-websocket');
+    var _ = require('lodash');
+    var express = require('express');
+    var swig = require('swig');
+    var fs = require('fs');
+
+    gui.App.addOriginAccessWhitelistEntry('https://api.twitch.tv/', 'app', 'twitch-polls', true);
+
+    var websocketClient = null;
+    var currentPoll = {};
+    var ircClient = null;
+
+    var startExpress = function() {
+      var app = express();
+
+      app.set('view cache', false);
+      swig.setDefaults({ cache: false });
+      app.get('/poll-results/', function(req, res) {
+        res.send(swig.renderFile(process.cwd() + '/templates/base.html', {
+          port: 15131,
+          getTemplate: function() {
+            var templateContent = fs.readFileSync(process.cwd() + '/templates/results.html');
+
+            return templateContent;
+          }
+        }));
+      });
+
+      app.listen(12512, "localhost");
+    }
+
+    var ircChannel = '';
+
+    var startPoll = function() {
+      currentPoll = {}
+      currentPoll.answered = [];
+
+      var question = $('.js-question').val();;
+
+      $('.js-start-poll').attr('disabled', 'disabled');
+
+      if(!question) {
+        $('.js-single-question').find('.wy-control-group').addClass('wy-control-group-error');
+        $('.js-single-question').find('.wy-form-message').show();
+        $('.js-start-poll').removeAttr('disabled');
+        return;
+      }
+      $('.js-single-question').find('.wy-control-group').removeClass('wy-control-group-error');
+      $('.js-single-question').find('.wy-form-message').hide();
+
+      currentPoll.question = question;
+      currentPoll.options = [];
+
+      var pollType = $('.js-polltype').val();
+
+      if(pollType === 'yn') {
+        currentPoll.options.push({ label: 'Yes', value: 0 });
+        currentPoll.options.push({ label : 'No', value: 0 });
+      } else if (pollType === 'tf') {
+        currentPoll.options.push({ label: 'True', value: 0});
+        currentPoll.options.push({ label : 'False', value: 0});
+      } else if (pollType === 'custom') {
+        $('.js-custom .wy-control input').each(function() {
+          currentPoll.options.push({ label : $(this).val(), value: 0 });
+        })
+      }
+
+      $('.js-custom .wy-control-group').removeClass('wy-control-group-error');
+      $('.js-custom .wy-control-group .wy-control .wy-form-message').remove();
+
+      var exit = false;
+      currentPoll.options.forEach(function(opt, index) {
+        if(opt.label.replace(' ', '') === "") {
+          $('.js-custom .wy-control-group').eq(index).addClass('wy-control-group-error');
+          $('.js-custom .wy-control-group').eq(index).find('.wy-control').first().append('<span class="wy-form-message">Option can not be empty.</span>');
+          exit = true;
+        }
+      });
+
+      if(exit) {
+        $('.js-start-poll').removeAttr('disabled');
+        return;
+      }
+
+      currentPoll.duration = $('.js-duration').val();
+      currentPoll.elapsed = 0;
+      currentPoll.timeLeft = currentPoll.duration;
+      currentPoll.hasAnswers = false;
+      currentPoll.running = true;
+
+      $('.js-res-results').html('');
+      currentPoll.options.forEach(function(opt, index) {
+          $('.js-res-results').append('<span><b>' + opt.label + ': </b></span><span class="js-res-opt-' + index + '">0</span><br/><br/>')
+      })
+
+      $('.js-res-status').text('Poll Started!');
+      $('.js-res-question').text(currentPoll.question);
+      $('.js-res-seconds').text(currentPoll.timeLeft);
+      $('.js-results .no-polls').remove();
+      $('.js-results .js-res-pane').show();
+      $('.js-start-poll').hide();
+      $('.js-stop-poll').show();
+      $('.js-start-poll').removeAttr('disabled');
+      $('.js-tab span').removeClass('active');
+      $('.js-tab .js-poll-tab').addClass('active');
+      $('.js-controls').hide();
+      $('.js-results').show();
+
+      if(websocketClient)
+        websocketClient.sendText('init_poll:' + JSON.stringify(currentPoll));
+
+      console.log('Starting Poll');
+
+      var pollQuestion = 'New Poll: ' + currentPoll.question + " ";
+
+      var curOpt = 97;
+      currentPoll.options.forEach(function(opt) {
+        pollQuestion += String.fromCharCode(curOpt) + ') ' + opt.label + ' ';
+        curOpt++;
+      });
+
+      pollQuestion.slice(0, pollQuestion.length - 1);
+
+      if(ircClient)
+        ircClient.say(ircChannel, pollQuestion);
+
+      currentPoll.interval = setInterval(function() {
+        currentPoll.timeLeft -= 1;
+        currentPoll.elapsed += 1;
+
+        if(currentPoll.timeLeft === 0) {
+          clearInterval(currentPoll.interval);
+          currentPoll.interval = null;
+
+          $('.js-res-status').text('Poll Finished!');
+          $('.js-res-seconds').text('0');
+
+          if(!$('.js-results-switch').hasClass('active')) {
+            if(ircClient)
+              ircClient.say(ircChannel, 'Poll Finished');
+          } else {
+            var resultsString = 'Poll Results. ';
+
+            currentPoll.options.forEach(function(opt, index) {
+              resultsString += opt.label + ': ' + opt.value + ' ';
+            });
+
+            if(ircClient)
+              ircClient.say(ircChannel, resultsString);
+          }
+
+          if(websocketClient)
+            websocketClient.sendText('stop_poll');
+
+          currentPoll.running = false;
+          $('.js-stop-poll').hide();
+          $('.js-start-poll').show();
+        } else {
+          $('.js-res-seconds').text(currentPoll.timeLeft);
+          if(websocketClient)
+            websocketClient.sendText('update_time:' + currentPoll.timeLeft + ':' + currentPoll.elapsed);
+        }
+      }, 1000);
+    }
+
+    var websocketListen = function() {
+      websocketClient.sendText('init_poll:' + JSON.stringify(currentPoll));
+      // Establish listeners here
+    }
+
+    var connectToIRC = function(name) {
+      var client = new irc.client({
+          options: {
+              tc: 3
+          },
+          identity: {
+              username: name,
+              password: 'oauth:' + localStorage.accessToken
+          },
+          channels: ['#' + name]
+      });
+
+      ircChannel = '#' + name;
+      ircClient = client;
+
+      // Connect the client to server..
+      client.connect();
+      // Your events..
+      client.addListener('chat', function (channel, user, message) {
+        if(currentPoll.running && channel === '#' + name && _.indexOf(currentPoll.answered, user.username) === -1 && message.length === 1) {
+          var pollNum = message.toLowerCase().charCodeAt(0) - 97;
+
+          if(pollNum <= currentPoll.options.length - 1) {
+            currentPoll.hasAnswers = true;
+            currentPoll.answered.push(user.username);
+
+            currentPoll.options[pollNum].value += 1;
+
+            $('.js-res-opt-' + pollNum).text(currentPoll.options[pollNum].value);
+
+            if(websocketClient)
+              websocketClient.sendText('answer_opt:' + pollNum);
+          }
+        }
+      });
+      client.addListener('join', function() {
+        var websocketServer = ws.createServer(function(conn) {
+          if(websocketClient) {
+            websocketClient.close();
+          }
+
+          websocketClient = conn;
+          websocketListen();
+        }).listen(15131, "localhost");
+
+        startExpress();
+
+        console.log('Connected and listening');
+       // $('.js-results').show();
+        $('.js-tab').show();
+        $('.js-controls').show();
+        $('.js-loader').hide();
+      })
+
+      client.addListener('disconnected', function (message) {
+
+        if(message === 'Login unsuccessful') {
+          localStorage.accessToken = null;
+
+          if(websocketClient) {
+            websocketClient.on('close', function() {
+              Twitch.login({
+                scope: ['user_read', 'chat_login']
+              });
+            });
+
+            websocketClient.close();
+          } else {
+            Twitch.login({
+              scope: ['user_read', 'chat_login']
+            });
+          }
+        }
+      });
+    }
+
+    $(document).ready(function() {
+      $('.js-main-container').show();
+
+      // Check if the hashtag contains the information on oauth
+      var hash = window.location.hash;
+
+      if(hash && hash.indexOf('#access_token') === 0) {
+        localStorage.accessToken = hash.split('&')[0].replace('#access_token=', '');
+      } else if(localStorage.accessToken) {
+        location.hash = '#access_token=' + localStorage.accessToken;
+      }
+
+      Twitch.init({clientId: 'suwsawsp19umdetq3wriq1wwofi0k95'}, function(error, status) {
+        if (error) {
+          console.log(error);
+        }
+
+        if(localStorage.accessToken) {
+          Twitch.api({ method: "user" }, function(err, user) {
+            if(err) {
+              Twitch.login({
+                scope: ['user_read', 'chat_login']
+              })
+              return;
+            }
+            connectToIRC(user ? user.name : '');
+          })
+        } else {
+          Twitch.login({
+            scope: ['user_read', 'chat_login']
+          });
+        }
+      });
+
+      $(document).on('click', '.js-add-option', function() {
+        var template = $($('#option_template').html());
+
+        template.find('label').text('Option ' + ($('.js-custom .wy-control-group').length + 1));
+
+        $('.js-custom .js-add-option, .js-custom .js-remove-option').remove();
+        $('.js-custom fieldset').append(template);
+      });
+      $(document).on('click', '.js-remove-option', function() {
+        $('.js-custom .wy-control-group').last().remove();
+
+        var obj = $('.js-custom .wy-control-group').last().find('.wy-control');
+
+        var spans = '<span class="wy-input-context js-add-option" style="cursor: pointer;">+</span>';
+
+        if($('.js-custom .wy-control-group').length > 1) {
+          spans += '<span  class="wy-input-context js-remove-option" style="cursor: pointer;" >-</span>';
+        }
+
+        obj.html(obj.html().trim() + spans);
+      });
+      $(document).on('click', '.js-copy-address', function() {
+        gui.Clipboard.get().set($('.js-endpoint').val(), 'text');
+
+        $('.js-copy-success').find('li').addClass('on');
+
+        setTimeout(function() {  $('.js-copy-success').find('li').removeClass('on'); }, 700)
+      });
+
+      $(document).on('click', '.js-results-switch', function() {
+        $(this).toggleClass('active');
+      });
+
+      $(document).on('click', '.js-start-poll', function() {
+        startPoll();  
+      })
+
+      $(document).on('change', '.js-polltype', function(event) {
+        var val = $(this).val();
+
+        if(val === 'custom') {
+          $('.js-custom').show();
+        } else {
+          $('.js-custom').hide();
+        }
+      });
+
+
+      $(document).on('click', '.js-create-tab:not(.active)', function() {
+        $('.js-tab span').removeClass('active');
+        $('.js-tab .js-create-tab').addClass('active')
+        $('.js-controls').show();
+        $('.js-results').hide();
+      });
+
+      $(document).on('click', '.js-poll-tab:not(.active)', function() {
+        $('.js-tab span').removeClass('active');
+        $('.js-tab .js-poll-tab').addClass('active');
+        $('.js-controls').hide();
+        $('.js-results').show();
+      });
+
+      $(document).on('click', '.js-open-address', function() {
+        var addr = $(this).parent().find('input').val();
+
+        gui.Shell.openExternal(addr);
+      })
+
+      $(document).on('click', '.js-stop-poll', function() {
+        if(currentPoll.running) {
+
+          $('.js-res-status').text('Poll Finished!');
+          $('.js-res-seconds').text('0');
+          $('.js-start-poll').attr('disabled', 'disabled');
+
+          if(currentPoll.interval) {
+            clearInterval(currentPoll.interval);
+            currentPoll.interval = null;
+          }
+
+          if(!$('.js-results-switch').hasClass('active')) {
+            if(ircClient)
+              ircClient.say(ircChannel, 'Poll Finished');
+          } else {
+            var resultsString = 'Poll Results. ';
+
+            currentPoll.options.forEach(function(opt, index) {
+              resultsString += opt.label + ': ' + opt.value + ' ';
+            });
+
+            if(ircClient)
+              ircClient.say(ircChannel, resultsString);
+          }
+
+          if(websocketClient)
+            websocketClient.sendText('stop_poll');
+
+          currentPoll.running = false;
+          $('.js-stop-poll').hide();
+          $('.js-start-poll').show();
+          $('.js-start-poll').removeAttr('disabled');
+        }
+      })
+    });
+    </script>
+  </body>
+</html>

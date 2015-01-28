@@ -1,0 +1,34 @@
+{# 
+  Variables available in this template
+  running:      If the poll is currently running
+  ended:        If the poll was run and now ended
+  hasAnswers:   If the poll has at least one answer
+  question:     The question of the poll being asked
+  total:        The total # of votes
+  options:      Array of options on poll and current values
+    .label:     The label of the option
+    .char:      The character users type to vote for this option
+    .value:     The current # of votes for that option
+    .perc:      The percentage of total votes for this option
+  duration:     # of seconds poll will run for
+  timeLeft:     Seconds left before poll is finished
+  elapsed:      # of seconds since poll started
+  timeSinceEnd: # of seconds since poll closed
+#}
+
+{% if running or (ended and timeSinceEnd < 60) %}
+  {% if running  %}
+    <div>Poll is running now, submit your votes! ({{ timeLeft }}s)</div>
+  {% else %}
+    <div>Poll is over!</div>
+  {% endif %}
+
+  <div>Question: {{ question }}</div>
+  <div>Options:
+    <ul>
+     {% for opt in options %} <li>{{opt.char}}) {{opt.label}}: {{ opt.perc }}%</li>{% endfor %}
+    </ul>
+  </div>
+
+  ADGDAGADHDAHADH
+{% endif %}

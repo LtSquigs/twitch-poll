@@ -1,0 +1,26 @@
+{
+  "main": "app://twitch-polls/index.html",
+  "name": "twitch-polls",
+  "description": "An app to use twitch irc to create polls for live streams",
+  "version": "0.1.0",
+  "keywords": [
+    "twitch",
+    "polls"
+  ],
+  "window": {
+    "title": "Twitch Polls",
+    "toolbar": false,
+    "frame": true,
+    "width": 420,
+    "height": 790,
+    "position": "center"
+  },
+  "dependencies": {
+    "irc": "0.3.7",
+    "twitch-irc": "^1.1.0",
+    "express": "^4.11.1",
+    "nodejs-websocket": "^1.2.0",
+    "lodash": "^3.0.0",
+    "swig": "^1.4.2"
+  }
+}
