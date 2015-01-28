@@ -1,23 +1,31 @@
-{# 
-  Variables available in this template
-  running:      If the poll is currently running
-  ended:        If the poll was run and now ended
-  hasAnswers:   If the poll has at least one answer
-  question:     The question of the poll being asked
-  total:        The total # of votes
-  options:      Array of options on poll and current values
-    .label:     The label of the option
-    .char:      The character users type to vote for this option
-    .value:     The current # of votes for that option
-    .perc:      The percentage of total votes for this option
-  duration:     # of seconds poll will run for
-  timeLeft:     Seconds left before poll is finished
-  elapsed:      # of seconds since poll started
-  timeSinceEnd: # of seconds since poll closed
+{#
+  This is an example of a comment.
+
+  Here are the variables available in this template
+    running:      If the poll is currently running
+    ended:        If the poll was run and now ended
+    hasAnswers:   If the poll has at least one answer
+    question:     The question of the poll being asked
+    total:        The total # of votes
+    options:      Array of options on poll and current values
+      .label:     The label of the option
+      .char:      The character users type to vote for this option
+      .value:     The current # of votes for that option
+      .perc:      The percentage of total votes for this option
+    duration:     # of seconds poll will run for
+    timeLeft:     Seconds left before poll is finished
+    elapsed:      # of seconds since poll started
+    timeSinceEnd: # of seconds since poll closed
 #}
 
-<div style="color: white;">
+{# We set the text color to white, when loaded in a browser you wont be able to see it, but in xsplit it will look real nice #}
+{# We set the font-size to 30px to be large on the screen, adjust as necessary #}
+<div style="color: white; font-size: 30px;">
+
+{# Here we decide to only show the poll if it is running, or a previous poll ended within the last 60 seconds #}
 {% if running or (ended and timeSinceEnd < 60) %}
+
+  {# We show different text based off if the poll is running or not, if running we show the time left #}
   {% if running  %}
     <div>Poll is running now, submit your votes! ({{ timeLeft }}s)</div>
   {% else %}
@@ -27,8 +35,13 @@
   <div>Question: {{ question }}</div>
   <div>Options:
     <ul>
-     {% for opt in options %} <li>{{opt.char}}) {{opt.label}}: {{ opt.perc }}%</li>{% endfor %}
+     {# This is an example of how to iterate through all the options available in a poll #}
+     {# opt.char is the character users enter to vote for the option, label is the name of the option, and perc is the percentage of votes #}
+     {% for opt in options %} 
+      <li>{{opt.char}}) {{opt.label}}: {{ opt.perc }}%</li>
+     {% endfor %}
     </ul>
   </div>
 {% endif %}
+
 </div>
