@@ -12,8 +12,8 @@
     </script>
   {% endraw %}
   </head>
-  <body style="background: black; color: white;">
-  <div id="swigContainer" style="width: 100%; height: 100%; ">
+  <body>
+  <div id="swigContainer">
 
   </div>
 
@@ -25,7 +25,6 @@
     var currentPoll = {};
     var templateString = '';
     var swigRender = function() {
-    console.log(currentPoll);
     $('#swigContainer').html(swig.render(templateString, { locals: currentPoll }));
     }
 
@@ -73,7 +72,8 @@
         currentPoll.ended = true;
         currentPoll.interval = setInterval(function() {
           currentPoll.timeSinceEnd += 1;
-        });
+          swigRender();
+        }, 1000);
       } else if (message.indexOf('answer_opt:') === 0) {
         var num = message.replace('answer_opt:', '') * 1;
 

@@ -16,6 +16,7 @@
   timeSinceEnd: # of seconds since poll closed
 #}
 
+<div style="color: white;">
 {% if running or (ended and timeSinceEnd < 60) %}
   {% if running  %}
     <div>Poll is running now, submit your votes! ({{ timeLeft }}s)</div>
@@ -30,3 +31,4 @@
     </ul>
   </div>
 {% endif %}
+</div>
