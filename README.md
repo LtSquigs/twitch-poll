@@ -6,7 +6,7 @@ This is a Windows Application that you can use to poll Twitch viewers in twitch 
 
 Installation of Twitch Polls, simply [download the release rar](https://github.com/LtSquigs/twitch-poll/releases/download/1.0.0/TwitchPolls.rar), extract the rar somewhere, and run TwitchPolls.exe in the extracted directory.
 
-## Created a Poll
+## Creating a Poll
 
 Creating a poll is easy, all you have to do is set the poll options and then start the poll.
 
