@@ -12,11 +12,11 @@ Creating a poll is easy, all you have to do is set the poll options and then sta
 
 The options that you can set are as follows:
 
-* Poll Duration - The duration the poll runs
-* Show Results In Chat - If turned on the results of the poll will be published in chat when finished, otherwise only a simple "Poll Finished" notification will be published to chat.
-* Poll Type - The type of poll you want to run, including Custom polls where you can create any kind of poll you want.
-* Question - The Question the poll is asking
-* Options - If using a custom poll, you must fill out the options that users may vote for.
+* **Poll Duration** - The duration the poll runs
+* **Show Results In Chat** - If turned on the results of the poll will be published in chat when finished, otherwise only a simple "Poll Finished" notification will be published to chat.
+* **Poll Type** - The type of poll you want to run, including Custom polls where you can create any kind of poll you want.
+* **Question** - The Question the poll is asking
+* **Options** - If using a custom poll, you must fill out the options that users may vote for.
 
 After you've set the options you want, you just have to hit the "Start Poll" button to start the poll. The application will send a message to the chat (under your channels username) signifying the start of the poll and describing how to vote for the various options.
 
