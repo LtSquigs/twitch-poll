@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="description" content="Twitch Polls : A NW.JS application that you can use to create polls in Twitch Chat and integrate them into streams.">
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Twitch Polls</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/LtSquigs/twitch-poll">View on GitHub</a>
+
+          <h1 id="project_title">Twitch Polls</h1>
+          <h2 id="project_tagline">A NW.JS application that you can use to create polls in Twitch Chat and integrate them into streams.</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/LtSquigs/twitch-poll/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/LtSquigs/twitch-poll/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>
+<a id="twitch-polls" class="anchor" href="#twitch-polls" aria-hidden="true"><span class="octicon octicon-link"></span></a>Twitch Polls</h1>
+
+<p>This is a nwjs app that you can use to run polls in Twitch Chat and display those results live on your stream.</p>
+
+<h2>
+<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation</h2>
+
+<p>There is no installing, just download the release package, unrar the file, and run TwitchPolls.exe</p>
+
+<h2>
+<a id="running-a-poll" class="anchor" href="#running-a-poll" aria-hidden="true"><span class="octicon octicon-link"></span></a>Running a Poll</h2>
+
+<p>Running a poll is simple, just choose your poll type, duration, and type in your question. If you use a custom poll type you also have to enter your poll options.</p>
+
+<p>Then simply hit "Start Poll" to start the poll in twitch chat. The program will send a message to twitch chat (under your username) asking people to respond to the poll, and when finished will publish the poll results into twitch chat. You can also hide the results from twitch chat by changing the "Show Results" option.</p>
+
+<h2>
+<a id="integrating-into-stream" class="anchor" href="#integrating-into-stream" aria-hidden="true"><span class="octicon octicon-link"></span></a>Integrating into stream</h2>
+
+<p>You can integrate the results of the poll into the stream by adding the provided export url to your preferred stream tool's webpage plugin.</p>
+
+<p>The results of the page are updated in real time as the poll is run. You can customize the output of the poll page by changing the file in <code>templates/results.html</code>.</p>
+
+<p>The template file is a simple swig template, and all the available variables are described in the file.</p>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Twitch Polls maintained by <a href="https://github.com/LtSquigs">LtSquigs</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
