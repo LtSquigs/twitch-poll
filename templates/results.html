@@ -20,7 +20,7 @@
 
 {# We set the text color to white, when loaded in a browser you wont be able to see it, but in xsplit it will look real nice #}
 {# We set the font-size to 30px to be large on the screen, adjust as necessary #}
-<div style="color: white; font-size: 30px;">
+<div>
 
 {# Here we decide to only show the poll if it is running, or a previous poll ended within the last 60 seconds #}
 {% if running or (ended and timeSinceEnd < 60) %}

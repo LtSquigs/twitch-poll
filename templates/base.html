@@ -12,8 +12,8 @@
     </script>
   {% endraw %}
   </head>
-  <body>
-  <div id="swigContainer">
+  <body {% if backgroundColor or textColor %}style="{% if backgroundColor %}background: rgba({{backgroundColor.r}}, {{backgroundColor.g}}, {{backgroundColor.b}}, {{backgroundColor.a}});{% endif %}{% if textColor %}color: rgba({{textColor.r}}, {{textColor.g}}, {{textColor.b}}, {{textColor.a}});{% endif %}"{% endif %}>
+  <div id="swigContainer" {% if textSize %}style="font-size: {{ textSize }}px;"{% endif %}>
 
   </div>
 
@@ -51,7 +51,6 @@
         }
 
         currentPoll = data;
-
 
         var curOpt = 97;
         currentPoll.options.forEach(function(opt) {

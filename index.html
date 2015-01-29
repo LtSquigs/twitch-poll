@@ -3,6 +3,8 @@
     <link rel="stylesheet" href="app://twitch-polls/css/wyrm.css">
     <script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
     <script src="https://ttv-api.s3.amazonaws.com/twitch.min.js"></script>
+    <link rel="stylesheet" href="app://twitch-polls/css/spectrum.css">
+    <script src="app://twitch-polls/spectrum.js"></script>
     <style>
 
       .tab-header span {
@@ -34,6 +36,10 @@
       .js-results {
         padding: 10px;
       }
+
+      .wy-switch:after {
+        content: "" !important;
+      }
     </style>
   </head>
   <body>
@@ -47,6 +53,14 @@
               <label>Export Url</label>
               <div class="wy-control wy-input-suffix">
                 <input size="28" type="text" class="js-endpoint" readonly="readonly" value="http://localhost:12512/poll-results/" /><span class="wy-input-context js-copy-address" style="cursor: pointer;">Copy</span><span class="wy-input-context js-open-address" style="cursor: pointer;">Open</span>
+              </div>
+            </div>
+            <div class="wy-control-group">
+              <label>Export Styles</label>
+              <div class="wy-control wy-input-suffix">
+                Background: <input type="text" class="js-background-color" />
+                Text: <input type="text" class="js-text-color" />
+                Font Size: <input type="number" class="js-text-size" max="99" min="1" value="30" />
               </div>
             </div>
             <div class="wy-control-group">
@@ -170,13 +184,30 @@
       app.set('view cache', false);
       swig.setDefaults({ cache: false });
       app.get('/poll-results/', function(req, res) {
+        var backgroundColor = $('.js-background-color').spectrum('get');
+
+        if(backgroundColor) {
+          backgroundColor = backgroundColor.toRgb();
+        } 
+
+        var textColor = $('.js-text-color').spectrum('get');
+
+        if(textColor) {
+          textColor = textColor.toRgb();
+        }
+
+        var textSize = $('.js-text-size').val();
+            
         res.send(swig.renderFile(process.cwd() + '/templates/base.html', {
           port: 15131,
           getTemplate: function() {
             var templateContent = fs.readFileSync(process.cwd() + '/templates/results.html');
 
             return templateContent;
-          }
+          },
+          backgroundColor: backgroundColor,
+          textColor: textColor,
+          textSize: textSize
         }));
       });
 
@@ -535,6 +566,9 @@
           $('.js-start-poll').removeAttr('disabled');
         }
       })
+
+      $('.js-background-color').spectrum({ allowEmpty: true, showAlpha: true, showButtons: false });
+      $('.js-text-color').spectrum({ allowEmpty: true, showAlpha: true, color: 'white', showButtons: false });
     });
     </script>
   </body>
