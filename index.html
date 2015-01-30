@@ -351,6 +351,10 @@
     var websocketListen = function() {
       websocketClient.sendText('init_poll:' + JSON.stringify(currentPoll));
       // Establish listeners here
+      
+      websocketClient.on('close', function() {
+        websocketClient = null;
+      });
     }
 
     var connectToIRC = function(name) {
