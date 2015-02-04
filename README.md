@@ -24,7 +24,7 @@ The poll will run for the duration set in the options, then when finished will d
 
 ## Integrating into stream
 
-You can integrate the results of the poll into your stream by simply adding the URL provided as an "Export Url" to the scene in your streaming software. For XSplit 2.0 you can add this directly as a Webpage URL, for OBS you may need to load the page in a web browser and include the browsers tab.
+You can integrate the results of the poll into your stream by simply adding the URL provided as an "Export Url" to the scene in your streaming software. For XSplit 2.0 you can add this directly as a Webpage URL, for OBS you can use the CLR Browser Plugin to achieve the same results.
 
 The "Export Styles" option lets you change some of the details of how this information is output, including the background color (for chroma keying), the text color, and how large the text is. 
 
