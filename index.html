@@ -1,95 +1,193 @@
-<!doctype html>
 <html>
   <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>Twitch Polls by LtSquigs</title>
-
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <title>Twitch Polls</title>
     <link rel="icon" type="image/png" href="images/bar-chart-32.png">
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.5.0/pure-min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!--[if lte IE 8]>
+        <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.5.0/grids-responsive-old-ie-min.css">
     <![endif]-->
+    <!--[if gt IE 8]><!-->
+        <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.5.0/grids-responsive-min.css">
+    <!--<![endif]-->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fluidbox/1.4.3/css/fluidbox.css">
+
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/fluidbox/1.4.3/jquery.fluidbox.min.js"></script>
+    <style>
+
+      body {
+        background: #6441A5;
+        color: #F1F1F1;
+        margin-bottom: 50px;
+      }
+
+      .header {
+        background: #6441A5;
+        display: inline-flex;
+        display: -webkit-inline-flex;
+        display: -moz-inline-flex;
+      }
+
+      .simple {
+        color: #F1F1F1;
+        display: inline-flex;
+        display: -webkit-inline-flex;
+        display: -moz-inline-flex;
+      }
+
+      .simple div { 
+        text-align: center;
+        margin: auto;
+        font-size: 2em;
+        font-family: sans-serif;
+        font-weight: bold;
+        margin-top: 50px;
+      }
+
+      .header div {
+        text-align: center;
+        margin-top: auto;
+        margin-bottom: auto;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .title {
+        font-size: 2em;
+        font-family:sans-serif;
+        font-weight: bold;
+        display: inline-block;
+        margin-top: 50px;
+        margin-bottom: 10px;
+      }
+
+      .tagline {
+        margin-top: 10px;
+        margin-bottom: 10px;
+        display: inline-block;
+      }
+
+      .download {
+        border: 2px solid #F1F1F1;
+        display: inline-block;
+        padding: 5px;
+        font-size: 1.2em;
+        font-family: sans-serif;
+        font-weight: bold;
+        border-radius: 3px;
+        margin-top: 10px;
+        margin-bottom: 50px;
+      }
+
+      a {
+        color: #F1F1F1;
+        text-decoration: none;
+      }
+
+      .docs {
+        margin-left: 20px;
+        display: inline-block;
+        padding: 5px;
+        font-family: sans-serif;
+        text-decoration: underline;
+      }
+
+      .promo-img {
+        background: #F1F1F1;
+        padding-left: 20vw;
+        padding-right: 20vw;
+        padding-top: 50px;
+        padding-bottom: 50px;
+      }
+
+      @media (max-width: 768px) {
+        .promo-img {
+          padding-left: 20px;
+          padding-right: 20px;
+        }
+      }
+
+      .instruction {
+      }
+
+      .instruction>div {
+        margin-left: auto;
+        margin-right: auto;
+        padding-top: 30px;
+      }
+
+      .instruction>div span {
+        display: inline-block;
+        padding-left: 40px;
+        padding-right: 40px;
+        line-height: 1.5;
+        color: rgba(255,255,255,.8);
+      }
+
+      .instruction h2 {
+        margin: auto;
+        margin-bottom: 15px;
+        text-align: center;
+      }
+
+      .install {
+        cursor: pointer;
+      }
+    </style>
+    <script>
+      $(function () {
+          $('a').fluidbox();
+      });
+    </script>
   </head>
   <body>
-    <div class="wrapper">
-      <header style="position: initial;">
-        <h1>Twitch Polls</h1>
-        <p>A NW.JS application that you can use to create polls in Twitch Chat and integrate them into streams.</p>
+    <div class="pure-g">
+        <div class="pure-u-1-1 header">
+          <div>
+            <span class="title">Twitch Polls</span>
+            <br/>
+            <span class="tagline">An easy way to integrate audience feedback into your live stream</span>
+            <br/>
+            <span class="download"><a href="https://github.com/LtSquigs/twitch-poll/releases/download/1.0.0/TwitchPolls.rar">Download</a></span><span class="docs"><a href="https://github.com/LtSquigs/twitch-poll" target="_blank">Docs</a></span>
+          </div>
+        </div>
 
-        <p class="view"><a href="https://github.com/LtSquigs/twitch-poll">View the Project on GitHub <small>LtSquigs/twitch-poll</small></a></p>
+        <div class="pure-u-1-1 promo-img">
+          <a href="/static/promoimage.png" title="Twitch Polls">
+            <img class="pure-img" src="/static/promoimage.png" />
+          </a>
+        </div>
 
+        <div class="pure-u-1-1 simple">
+          <div>This is how it works:</div>
+        </div>
 
-        <ul style="width: 180px;">
-          <li><a href="https://github.com/LtSquigs/twitch-poll/releases/download/1.0.0/TwitchPolls.rar">Download <strong>RAR File</strong></a></li>
-          <li style="border-right: initial;"><a href="https://github.com/LtSquigs/twitch-poll">View On <strong>GitHub</strong></a></li>
-        </ul>
-        
-        <img src="images/app.png"/>
-      </header>
-      <section>
-        <h1>
-<a id="twitch-polls" class="anchor" href="#twitch-polls" aria-hidden="true"><span class="octicon octicon-link"></span></a>Twitch Polls</h1>
-
-<p>This is a Windows Application that you can use to poll Twitch viewers in twitch chat and integrate those results into your live streams.</p>
-
-<h2>
-<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation</h2>
-
-<p>Installation of Twitch Polls, simply <a href="https://github.com/LtSquigs/twitch-poll/releases/download/1.0.0/TwitchPolls.rar">download the release rar</a>, extract the rar somewhere, and run TwitchPolls.exe in the extracted directory.</p>
-
-<h2>
-<a id="creating-a-poll" class="anchor" href="#creating-a-poll" aria-hidden="true"><span class="octicon octicon-link"></span></a>Creating a Poll</h2>
-
-<p>Creating a poll is easy, all you have to do is set the poll options and then start the poll.</p>
-
-<p>The options that you can set are as follows:</p>
-
-<ul>
-<li>
-<strong>Poll Duration</strong> - The duration the poll runs</li>
-<li>
-<strong>Show Results In Chat</strong> - If turned on the results of the poll will be published in chat when finished, otherwise only a simple "Poll Finished" notification will be published to chat.</li>
-<li>
-<strong>Poll Type</strong> - The type of poll you want to run, including Custom polls where you can create any kind of poll you want.</li>
-<li>
-<strong>Question</strong> - The Question the poll is asking</li>
-<li>
-<strong>Options</strong> - If using a custom poll, you must fill out the options that users may vote for.</li>
-</ul>
-
-<p>After you've set the options you want, you just have to hit the "Start Poll" button to start the poll. The application will send a message to the chat (under your channels username) signifying the start of the poll and describing how to vote for the various options.</p>
-
-<p>The poll will run for the duration set in the options, then when finished will display the results based off of your settings.</p>
-
-<h2>
-<a id="integrating-into-stream" class="anchor" href="#integrating-into-stream" aria-hidden="true"><span class="octicon octicon-link"></span></a>Integrating into stream</h2>
-
-<p>You can integrate the results of the poll into your stream by simply adding the URL provided as an "Export Url" to the scene in your streaming software. For XSplit 2.0 you can add this directly as a Webpage URL, for OBS you may need to load the page in a web browser and include the browsers tab.</p>
-
-<p>The "Export Styles" option lets you change some of the details of how this information is output, including the background color (for chroma keying), the text color, and how large the text is. </p>
-
-<p>For more detailed changing of the exported web page, go to the "Changing the results page" section of the readme.</p>
-
-<p>The default settings are optimized for XSplit which automatically sets the background of the page to transparent. For OBS you may need to change the background to a color you can Chroma Key out.</p>
-
-<h2>
-<a id="changing-the-results-page" class="anchor" href="#changing-the-results-page" aria-hidden="true"><span class="octicon octicon-link"></span></a>Changing the results page</h2>
-
-<p>The default results page is designed to give you a spartan set of results that you can easily change through custom CSS or JS in XSplit.</p>
-
-<p>However, if you need a different layout to fit your stream you can easily change how the webpage outputs by changing the <code>templates/results.html</code> file.</p>
-
-<p>This file is a <a href="http://paularmstrong.github.io/swig/docs/#variables">simple swig file</a> with all of the various variables and things you may need to create the exact layout you want documented in the file itself.</p>
-      </section>
-      <footer style="position: initial;">
-        <p>This project is maintained by <a href="https://github.com/LtSquigs">LtSquigs</a></p>
-        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
-      </footer>
+        <div class="pure-u-1-1 pure-u-md-1-3 instruction">
+          <div>
+            <h2><a href="https://github.com/LtSquigs/twitch-poll/releases/download/1.0.0/TwitchPolls.rar"><i class="fa fa-download"></i> Install</a></h2>
+            <span>
+              Installing is as simple as downloading the RAR file above , extracting the files within, and running TwitchPolls.exe
+            </span>
+          </div>
+        </div>
+        <div class="pure-u-1-1 pure-u-md-1-3 instruction">
+          <div>
+            <h2><i class="fa fa-bar-chart"></i> Create Poll</h2>
+            <span>
+              After installation, to create a poll all you need to do is fill out the options presented in the application, then hit "Run Poll".
+            </span>
+          </div>
+        </div>
+        <div class="pure-u-1-1 pure-u-md-1-3 instruction">
+          <div>
+            <h2><i class="fa fa-video-camera"></i> Add To Livestream</a></h2>
+            <span>
+              You can easily integrate the results of the poll into your live stream by adding the "Export Url" as a source in your software.
+            </span>
+          </div>
+        </div>
     </div>
-    <script src="javascripts/scale.fix.js"></script>
-    
   </body>
 </html>
